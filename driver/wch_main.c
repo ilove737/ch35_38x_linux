@@ -891,7 +891,7 @@ static struct ser_driver wch_ser_reg = {
     .minor = 0,
 };
 
-static int __init wch_init(void)
+static int wch_probe(struct pci_dev *dev, const struct pci_device_id *ent)
 {
     int status = 0;
 
@@ -969,7 +969,7 @@ step1_fail:
     return status;
 }
 
-static void __exit wch_exit(void)
+static void wch_remove(struct pci_dev *dev)
 {
     printk("\n\n");
     printk("====================  WCH Device Driver Module Uninstall  ====================\n");
@@ -985,5 +985,11 @@ static void __exit wch_exit(void)
     printk("================================================================================\n");
 }
 
-module_init(wch_init);
-module_exit(wch_exit);
+static struct pci_driver wchserial_pci_driver = {
+    .name = "wchpciserial",
+    .probe = wch_probe,
+    .remove = wch_remove,
+    .id_table = wch_pci_board_id,
+};
+
+module_pci_driver(wchserial_pci_driver);
